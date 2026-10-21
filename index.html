@@ -1,6 +1,6 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111413"><title>CHOP X CHOP — BARBER QUALITY</title><style>
 :root{--gold:#dfbf82;--bg:#101312}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:var(--bg);color:#f6f0e6;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif}body{background:radial-gradient(ellipse at top,#33362e 0,#101312 62%)}.app{max-width:520px;margin:auto;padding:calc(env(safe-area-inset-top) + 12px) 13px calc(env(safe-area-inset-bottom) + 20px);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.eyebrow{text-align:center;font-size:9px;letter-spacing:.36em;color:var(--gold);font-weight:800}.logo{text-align:center;font-size:clamp(25px,7vw,34px);font-weight:950;letter-spacing:.15em;margin:4px 0 1px}.edition{text-align:center;font-size:10px;letter-spacing:.23em;color:#d0c8b8;margin-bottom:13px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.stat{border:1px solid #4b483d;background:#232724;border-radius:10px;text-align:center;padding:8px 4px}.stat small{display:block;font-size:9px;color:#b5b2a8;letter-spacing:.12em}.stat b{display:block;font-size:21px;color:#f5e7c5;font-variant-numeric:tabular-nums}.board{border:2px solid var(--gold);border-radius:17px;overflow:hidden;position:relative;box-shadow:0 0 0 4px #292c26,0 18px 36px #0008}canvas{display:block;width:100%;aspect-ratio:360/445;touch-action:none;background:#242825}.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#101412eb;padding:20px;text-align:center}.overlay.hidden{display:none}.panel{width:100%;background:#20241f;border:1px solid #76613e;border-radius:16px;padding:22px 16px}.panel small{color:var(--gold);letter-spacing:.2em}.panel h2{font-size:22px;letter-spacing:.07em;margin:10px 0}.panel .large{font-size:34px;font-weight:900;color:var(--gold)}.panel p{font-size:13px;color:#d3cbbd;line-height:1.55}.message{text-align:center;font-size:13px;min-height:20px;margin:13px 0 7px;color:#e7d7b4}.meter{height:8px;background:#3a3d35;border-radius:20px;overflow:hidden}.meter>div{height:100%;width:0;background:linear-gradient(90deg,#a57c42,#f0d9a2);transition:width .15s}.action{margin-top:13px;width:100%;min-height:51px;border:0;border-radius:10px;background:var(--gold);color:#181915;font-size:15px;letter-spacing:.09em;font-weight:900}.action:disabled{opacity:.45}.hint{text-align:center;font-size:11px;line-height:1.5;color:#a6a69c;margin:10px 0}.footer{text-align:center;color:#777970;font-size:9px;letter-spacing:.18em;margin-top:12px}
-</style></head><body><main class="app"><div class="eyebrow">THE BARBER ARCADE</div><div class="logo">CHOP X CHOP</div><div class="edition">PERFECT FADE / BARBER QUALITY 05</div><div class="stats"><div class="stat"><small>ОЧКИ</small><b id="score">0</b></div><div class="stat"><small>КЛИЕНТ</small><b id="client">1</b></div><div class="stat"><small>ВРЕМЯ</small><b id="time">60</b></div></div><div class="board"><canvas id="game" width="360" height="445"></canvas><div class="overlay" id="overlay"><div class="panel"><small>CHOP X CHOP PRESENTS</small><h2>PERFECT FADE</h2><div class="large">60 SEC</div><p>Проведи машинкой по боковой части головы. Укорачивай волосы постепенно: <b>снизу короче, сверху длиннее</b>. Ориентируйся на золотые линии.</p><button class="action" id="play">НАЧАТЬ СТРИЖКУ</button></div></div></div><div id="message" class="message">Точность важнее скорости</div><div class="meter"><div id="meter"></div></div><button id="restart" class="action">НАЧАТЬ ИГРУ</button><p class="hint">Веди пальцем по зоне фейда · Повторные проходы укорачивают волосы<br>Слишком короткая стрижка снижает качество</p><div class="footer">CHOP X CHOP · MOBILE ARCADE · 05</div></main>
+</style></head><body><main class="app"><div class="eyebrow">THE BARBER ARCADE</div><div class="logo">CHOP X CHOP</div><div class="edition">PERFECT FADE / BARBER QUALITY 06</div><div class="stats"><div class="stat"><small>ОЧКИ</small><b id="score">0</b></div><div class="stat"><small>КЛИЕНТ</small><b id="client">1</b></div><div class="stat"><small>ВРЕМЯ</small><b id="time">60</b></div></div><div class="board"><canvas id="game" width="360" height="445"></canvas><div class="overlay" id="overlay"><div class="panel"><small>CHOP X CHOP PRESENTS</small><h2>PERFECT FADE</h2><div class="large">60 SEC</div><p>Проведи машинкой по боковой части головы. Укорачивай волосы постепенно: <b>снизу короче, сверху длиннее</b>. Ориентируйся на золотые линии.</p><button class="action" id="play">НАЧАТЬ СТРИЖКУ</button></div></div></div><div id="message" class="message">Точность важнее скорости</div><div class="meter"><div id="meter"></div></div><button id="restart" class="action">НАЧАТЬ ИГРУ</button><p class="hint">Веди пальцем по зоне фейда · Повторные проходы укорачивают волосы<br>Слишком короткая стрижка снижает качество</p><div class="footer">CHOP X CHOP · MOBILE ARCADE · 06</div></main>
 <script>
 (()=>{'use strict';
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),els={score:document.getElementById('score'),client:document.getElementById('client'),time:document.getElementById('time'),overlay:document.getElementById('overlay'),play:document.getElementById('play'),restart:document.getElementById('restart'),message:document.getElementById('message'),meter:document.getElementById('meter')};
@@ -16,29 +16,85 @@ function setupHair(){cells=[];for(let y=125;y<267;y+=5)for(let x=95;x<220;x+=5){
 function background(){const grad=ctx.createLinearGradient(0,0,0,445);grad.addColorStop(0,'#343b36');grad.addColorStop(1,'#1e2521');ctx.fillStyle=grad;ctx.fillRect(0,0,360,445);ctx.strokeStyle='#ffffff08';for(let x=25;x<360;x+=34)strokeLine(x,0,x,445,'#ffffff08',1);ctx.textAlign='center';ctx.fillStyle='#dbc394';ctx.font='bold 10px system-ui';ctx.fillText('THE ART OF THE FADE',180,27);strokeLine(42,39,318,39,'#d5b87850',1);}
 function face(){
 const [skin,shadow,hair,shirt]=colors[(client-1)%colors.length];
-fillEllipse(184,447,143,94,shirt);
-ctx.fillStyle=shirt;ctx.beginPath();ctx.moveTo(86,445);ctx.quadraticCurveTo(89,386,133,369);ctx.quadraticCurveTo(169,355,210,369);ctx.quadraticCurveTo(267,385,278,445);ctx.closePath();ctx.fill();
-// Neck sits behind the jaw.
-ctx.fillStyle=shadow;ctx.beginPath();ctx.moveTo(145,313);ctx.lineTo(200,314);ctx.lineTo(198,383);ctx.quadraticCurveTo(174,400,151,383);ctx.closePath();ctx.fill();
-ctx.fillStyle=skin;ctx.beginPath();ctx.moveTo(151,319);ctx.lineTo(196,319);ctx.lineTo(194,376);ctx.quadraticCurveTo(176,391,155,376);ctx.closePath();ctx.fill();
-// Anatomically smoother right-facing profile: forehead, nose, lips, chin and jaw.
-ctx.fillStyle=shadow;ctx.beginPath();ctx.moveTo(161,74);ctx.bezierCurveTo(211,66,244,101,248,149);ctx.bezierCurveTo(251,172,247,201,249,223);ctx.bezierCurveTo(255,232,260,239,261,243);ctx.bezierCurveTo(261,249,254,253,247,254);ctx.bezierCurveTo(251,267,249,274,242,278);ctx.bezierCurveTo(245,292,241,302,233,307);ctx.bezierCurveTo(228,332,209,352,185,357);ctx.bezierCurveTo(149,361,112,333,100,291);ctx.bezierCurveTo(87,244,91,179,102,132);ctx.bezierCurveTo(112,96,133,78,161,74);ctx.closePath();ctx.fill();
-ctx.fillStyle=skin;ctx.beginPath();ctx.moveTo(162,77);ctx.bezierCurveTo(209,71,240,105,243,149);ctx.bezierCurveTo(245,176,240,204,242,223);ctx.bezierCurveTo(246,232,254,240,256,244);ctx.bezierCurveTo(256,248,249,249,240,250);ctx.bezierCurveTo(245,261,245,269,237,274);ctx.bezierCurveTo(240,288,235,297,227,302);ctx.bezierCurveTo(222,327,205,344,184,348);ctx.bezierCurveTo(151,353,120,326,108,286);ctx.bezierCurveTo(96,247,98,184,109,138);ctx.bezierCurveTo(120,101,137,83,162,77);ctx.closePath();ctx.fill();
-// Ear is placed at the jaw hinge, with natural scale and inner folds.
-fillEllipse(217,218,14,25,shadow);
-fillEllipse(219,216,12,22,skin);
-ctx.strokeStyle=shadow;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(222,201);ctx.bezierCurveTo(211,199,210,218,218,224);ctx.bezierCurveTo(225,230,226,213,220,212);ctx.stroke();
-fillEllipse(219,222,3,4,shadow);
-// Brow, eye, cheek shadow and understated lips.
-strokeLine(215,231,233,230,hair,3.4);
-fillEllipse(229,239,2.8,3.3,hair);
-ctx.strokeStyle='#a66f54';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(229,268);ctx.quadraticCurveTo(236,270,239,268);ctx.stroke();
-strokeLine(220,292,231,292,shadow,1.6);
-ctx.strokeStyle='#ffffff17';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(130,315);ctx.quadraticCurveTo(148,339,169,343);ctx.stroke();
+// Tailored barber cape and neck, with visible collar.
+const cape=ctx.createLinearGradient(80,375,290,445);cape.addColorStop(0,shirt);cape.addColorStop(1,'#242e2b');
+ctx.fillStyle=cape;ctx.beginPath();ctx.moveTo(43,445);ctx.bezierCurveTo(50,396,91,372,142,364);ctx.lineTo(206,363);ctx.bezierCurveTo(269,374,308,403,319,445);ctx.closePath();ctx.fill();
+ctx.fillStyle=shadow;ctx.beginPath();ctx.moveTo(142,303);ctx.lineTo(200,305);ctx.lineTo(198,381);ctx.quadraticCurveTo(174,399,145,375);ctx.closePath();ctx.fill();
+ctx.fillStyle=skin;ctx.beginPath();ctx.moveTo(148,307);ctx.lineTo(194,309);ctx.lineTo(192,371);ctx.quadraticCurveTo(174,385,150,370);ctx.closePath();ctx.fill();
+ctx.strokeStyle='#c6b48d';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(138,371);ctx.quadraticCurveTo(170,401,207,373);ctx.stroke();
+// A single continuous side-profile silhouette, not separate overlapping ellipses.
+ctx.fillStyle=shadow;ctx.beginPath();
+ctx.moveTo(151,79);ctx.bezierCurveTo(202,65,240,99,248,150);
+ctx.bezierCurveTo(254,181,244,213,250,231);
+ctx.bezierCurveTo(257,241,263,249,260,254);
+ctx.bezierCurveTo(257,259,250,259,247,261);
+ctx.bezierCurveTo(249,269,246,276,241,281);
+ctx.bezierCurveTo(244,287,241,293,235,298);
+ctx.bezierCurveTo(229,326,205,349,179,353);
+ctx.bezierCurveTo(134,354,104,322,96,272);
+ctx.bezierCurveTo(89,233,90,173,104,125);
+ctx.bezierCurveTo(114,99,130,84,151,79);ctx.closePath();ctx.fill();
+const skinLight=ctx.createLinearGradient(101,175,252,260);
+skinLight.addColorStop(0,skin);skinLight.addColorStop(.64,skin);skinLight.addColorStop(1,shadow);
+ctx.fillStyle=skinLight;ctx.beginPath();
+ctx.moveTo(155,81);ctx.bezierCurveTo(201,72,235,106,243,153);
+ctx.bezierCurveTo(248,180,240,212,245,233);
+ctx.bezierCurveTo(251,243,259,250,255,254);
+ctx.bezierCurveTo(251,258,245,258,242,260);
+ctx.bezierCurveTo(244,268,241,274,237,277);
+ctx.bezierCurveTo(240,284,237,290,231,295);
+ctx.bezierCurveTo(224,321,203,341,178,347);
+ctx.bezierCurveTo(139,348,111,318,103,271);
+ctx.bezierCurveTo(96,232,97,176,110,128);
+ctx.bezierCurveTo(119,103,134,86,155,81);ctx.closePath();ctx.fill();
+// Ear behind hairline, kept proportional to face.
+fillEllipse(207,218,13.5,24,shadow);
+fillEllipse(208,216,11.5,21,skin);
+ctx.strokeStyle=shadow;ctx.lineWidth=2.3;ctx.beginPath();
+ctx.moveTo(212,200);ctx.bezierCurveTo(201,201,201,218,208,225);
+ctx.bezierCurveTo(215,225,216,212,209,211);ctx.stroke();
+fillEllipse(209,224,2.6,3.4,shadow);
+// Delicate brow and eye; face points right.
+ctx.strokeStyle=hair;ctx.lineWidth=3.2;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(223,226);ctx.quadraticCurveTo(230,223,237,226);ctx.stroke();
+ctx.strokeStyle='#3a2924';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(226,239);ctx.quadraticCurveTo(231,243,236,238);ctx.stroke();
+fillEllipse(232,238,2.2,2.4,hair);
+// Nose highlight, cheek plane, mouth and chin.
+ctx.strokeStyle='#ffffff25';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(242,232);ctx.quadraticCurveTo(248,244,251,246);ctx.stroke();
+ctx.strokeStyle=shadow;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(238,268);ctx.quadraticCurveTo(242,269,245,266);ctx.stroke();
+ctx.strokeStyle='#824e3d88';ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(228,286);ctx.quadraticCurveTo(234,288,237,285);ctx.stroke();
+ctx.strokeStyle='#ffffff18';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(120,284);ctx.quadraticCurveTo(130,323,163,335);ctx.stroke();
 }
-function topHair(){const hair=colors[(client-1)%colors.length][2];ctx.beginPath();ctx.moveTo(88,189);ctx.bezierCurveTo(79,138,95,88,128,75);ctx.bezierCurveTo(164,52,209,77,231,112);ctx.bezierCurveTo(241,127,243,151,237,172);ctx.lineTo(214,180);ctx.bezierCurveTo(201,155,186,148,166,151);ctx.bezierCurveTo(143,154,125,181,111,222);ctx.lineTo(93,243);ctx.closePath();ctx.fillStyle=hair;ctx.fill();
-ctx.save();ctx.clip();for(let i=0;i<115;i++){const x=88+(i*43%148),y=70+(i*29%99);strokeLine(x,y,x+3,y-5,i%3?'#ffffff0b':'#ffffff16',1);}ctx.restore();}
-function strands(){const hair=colors[(client-1)%colors.length][2];for(const c of cells){const len=c.length;if(len<.055)continue;const h=(1.1+len*9),alpha=.13+len*.84;ctx.strokeStyle='rgba(22,19,17,'+alpha.toFixed(3)+')';ctx.lineWidth=1+len*3.3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.quadraticCurveTo(c.x-1.5,c.y-h*.6,c.x+Math.sin(c.seed*5)*2,c.y-h);ctx.stroke();}ctx.save();ctx.setLineDash([5,6]);ctx.strokeStyle='#e5c789bb';ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(98,260);ctx.bezierCurveTo(130,276,193,254,219,189);ctx.stroke();ctx.restore();ctx.fillStyle='#e7cf98';ctx.font='bold 10px system-ui';ctx.textAlign='left';ctx.fillText('FADE',32,282);strokeLine(69,279,97,260,'#e7cf98',1);}
+function topHair(){
+const hair=colors[(client-1)%colors.length][2];
+const gr=ctx.createLinearGradient(100,78,220,187);gr.addColorStop(0,'#342a25');gr.addColorStop(.5,hair);gr.addColorStop(1,'#181716');
+ctx.fillStyle=gr;ctx.beginPath();ctx.moveTo(93,199);
+ctx.bezierCurveTo(88,161,92,124,110,102);
+ctx.bezierCurveTo(125,76,157,69,183,75);
+ctx.bezierCurveTo(211,79,230,100,237,130);
+ctx.bezierCurveTo(240,142,239,154,237,166);
+ctx.bezierCurveTo(227,168,222,166,217,163);
+ctx.bezierCurveTo(203,146,186,139,168,145);
+ctx.bezierCurveTo(140,152,125,175,109,217);
+ctx.lineTo(95,239);ctx.closePath();ctx.fill();
+// Directional comb marks, clipped to top volume.
+ctx.save();ctx.clip();ctx.strokeStyle='#d7b78b12';ctx.lineWidth=1.3;
+for(let i=0;i<50;i++){const x=99+i*2.8,y=95+Math.sin(i*.3)*7;ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+17,y+10,x+27,y+27);ctx.stroke();}
+ctx.restore();
+}
+function strands(){
+const hair=colors[(client-1)%colors.length][2];
+for(const c of cells){const len=c.length;if(len<.04)continue;
+const h=.7+len*7.2,alpha=.12+len*.78;
+ctx.strokeStyle='rgba(25,21,19,'+alpha.toFixed(3)+')';
+ctx.lineWidth=.75+len*2.2;ctx.lineCap='round';ctx.beginPath();
+ctx.moveTo(c.x,c.y);ctx.quadraticCurveTo(c.x-1.1,c.y-h*.5,c.x+Math.sin(c.seed*5)*1.4,c.y-h);ctx.stroke();
+}
+// The guideline is subtle and only outlines the active fade area.
+ctx.save();ctx.setLineDash([4,6]);ctx.strokeStyle='#e4c789a0';ctx.lineWidth=1.7;ctx.beginPath();
+ctx.moveTo(101,261);ctx.bezierCurveTo(143,275,192,247,216,186);ctx.stroke();ctx.restore();
+ctx.fillStyle='#e7cf98';ctx.font='bold 10px system-ui';ctx.textAlign='left';ctx.fillText('FADE',35,283);
+strokeLine(72,279,101,261,'#e7cf9880',1);
+}
 function clipper(){if(!pointer)return;ctx.save();ctx.translate(pointer.x,pointer.y);ctx.rotate(-.36);ctx.shadowColor='#000b';ctx.shadowBlur=9;ctx.fillStyle='#b99b61';ctx.beginPath();ctx.roundRect(-12,-3,24,71,6);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#ddd5c3';ctx.fillRect(-14,-10,28,13);ctx.fillStyle='#e8e9e6';for(let i=0;i<7;i++)ctx.fillRect(-13+i*4,-17,2.4,9);ctx.fillStyle='#3d3b33';ctx.fillRect(-5,26,10,18);ctx.fillStyle='#fff4ce';ctx.font='bold 7px system-ui';ctx.textAlign='center';ctx.fillText('CXC',0,16);ctx.restore();}
 function render(){background();face();topHair();strands();for(const s of sparks)fillEllipse(s.x,s.y,s.r,s.r,'#a58c68');clipper();}
 function metrics(){let good=0,possible=0,tooShort=0;for(const c of cells){const difference=c.length-c.target;if(difference<.16&&difference>-.16)good++;if(difference<-.18)tooShort++;possible++;}quality=possible?good/possible:0;perfect=good;els.meter.style.width=Math.round(quality*100)+'%';return{good,possible,tooShort};}
