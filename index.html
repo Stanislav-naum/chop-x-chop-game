@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#101112"><title>CHOP X CHOP — PERFECT FADE</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#101112;color:#f4f0e7;font-family:system-ui,-apple-system,sans-serif;text-align:center}main{max-width:520px;margin:auto;padding:calc(env(safe-area-inset-top) + 22px) 14px 32px}.eyebrow{color:#d7b777;letter-spacing:4px;font-size:12px}h1{font-size:29px;letter-spacing:5px;margin:9px 0}h2{font-size:13px;letter-spacing:4px;color:#d7b777;font-weight:500;margin:0 0 20px}.stats{display:flex;justify-content:space-around;background:#222427;padding:13px 2px;border-radius:12px;margin-bottom:15px;font-weight:800;font-size:14px}canvas{display:block;width:100%;aspect-ratio:360/470;border:3px solid #d7b777;border-radius:20px;background:#25272a;touch-action:none}p{color:#d5d1c8;font-size:14px;line-height:1.5}button{border:0;border-radius:12px;background:#d7b777;color:#101112;padding:15px 25px;font-weight:800;font-size:17px;min-height:52px}button:disabled{opacity:.5}.note{font-size:12px;color:#a8a7a3}</style></head>
+<body><main><div class="eyebrow">BARBERSHOP ARCADE</div><h1>CHOP X CHOP</h1><h2>PERFECT FADE · DEMO 02</h2><div class="stats"><span>ОЧКИ: <b id="score">0</b></span><span>КЛИЕНТ: <b id="client">1</b></span><span>ВРЕМЯ: <b id="time">60</b></span></div><canvas id="game" width="360" height="470"></canvas><p id="message">Состриги волосы внутри золотого контура. Проведи пальцем по голове клиента!</p><button id="start">Начать игру</button><p class="note">Демоверсия для iPhone · Управление пальцем</p></main>
+<script>
+(()=>{'use strict';
+const c=document.getElementById('game'),ctx=c.getContext('2d'),scoreEl=document.getElementById('score'),clientEl=document.getElementById('client'),timeEl=document.getElementById('time'),message=document.getElementById('message'),start=document.getElementById('start');
+let playing=false,score=0,client=1,time=60,last=0,down=false,cut=new Set(),required=[],bad=0,clip=null;
+const cells=[];for(let y=0;y<8;y++)for(let x=0;x<12;x++){let px=90+x*15,py=112+y*14;let inside=((px-180)/96)**2+((py-165)/75)**2<1;if(inside)cells.push({x:px,y:py,id:y*12+x});}
+function resetHair(){cut.clear();bad=0;required=cells.filter(p=>((p.x-180)/95)**2+((p.y-165)/73)**2<1);}
+function draw(){ctx.clearRect(0,0,360,470);ctx.fillStyle='#282a2e';ctx.fillRect(0,0,360,470);
+ctx.fillStyle='#1c1d20';ctx.fillRect(0,375,360,95);ctx.fillStyle='#c7a76c';ctx.fillRect(0,376,360,3);
+ctx.fillStyle='#3a3d40';ctx.beginPath();ctx.roundRect(75,305,210,170,24);ctx.fill();
+ctx.fillStyle='#d6a67f';ctx.beginPath();ctx.ellipse(180,226,89,119,0,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#b88768';ctx.beginPath();ctx.ellipse(88,238,12,23,0,0,7);ctx.ellipse(272,238,12,23,0,0,7);ctx.fill();
+ctx.strokeStyle='#4c2c25';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(120,222);ctx.lineTo(152,222);ctx.moveTo(207,222);ctx.lineTo(239,222);ctx.stroke();
+ctx.fillStyle='#24201e';ctx.beginPath();ctx.arc(137,234,4,0,7);ctx.arc(223,234,4,0,7);ctx.fill();
+ctx.strokeStyle='#6c4234';ctx.lineWidth=3;ctx.beginPath();ctx.arc(180,267,19,0,Math.PI);ctx.stroke();
+ctx.strokeStyle='#d7b777';ctx.lineWidth=3;ctx.setLineDash([7,5]);ctx.beginPath();ctx.ellipse(180,165,102,84,0,Math.PI,2*Math.PI);ctx.stroke();ctx.setLineDash([]);
+for(const p of required){if(cut.has(p.id))continue;ctx.fillStyle='#151412';ctx.beginPath();ctx.ellipse(p.x,p.y,10,15,(p.x-180)*.003,0,7);ctx.fill();}
+ctx.fillStyle='#f4f0e7';ctx.font='bold 14px system-ui';ctx.textAlign='center';ctx.fillText(playing?'ВЕДИ ПАЛЬЦЕМ ПО ВОЛОСАМ':'ГОТОВ К СТРИЖКЕ?',180,42);
+if(clip){ctx.save();ctx.translate(clip.x,clip.y);ctx.rotate(-.3);ctx.fillStyle='#d7b777';ctx.fillRect(-12,-30,24,55);ctx.fillStyle='#ddd';for(let i=0;i<5;i++)ctx.fillRect(-11+i*5,-36,3,10);ctx.restore();}
+}
+function position(e){const r=c.getBoundingClientRect();return {x:(e.clientX-r.left)*360/r.width,y:(e.clientY-r.top)*470/r.height};}
+function stroke(e){if(!playing||!down)return;clip=position(e);for(const p of required){if(Math.hypot(p.x-clip.x,p.y-clip.y)<22&&!cut.has(p.id)){cut.add(p.id);score+=10;scoreEl.textContent=score;}}
+if(cut.size>=required.length*.88){score+=250;scoreEl.textContent=score;client++;clientEl.textContent=client;resetHair();message.textContent='Отличная стрижка! Следующий клиент.';}draw();}
+c.addEventListener('pointerdown',e=>{if(!playing)return;down=true;c.setPointerCapture(e.pointerId);stroke(e);});c.addEventListener('pointermove',stroke);c.addEventListener('pointerup',()=>{down=false;clip=null;draw()});c.addEventListener('pointercancel',()=>{down=false;clip=null;draw()});
+function tick(t){if(!playing)return;if(t-last>=1000){const seconds=Math.floor((t-last)/1000);time=Math.max(0,time-seconds);last+=seconds*1000;timeEl.textContent=time;if(time===0){playing=false;down=false;clip=null;start.disabled=false;start.textContent='Играть снова';message.textContent='Время вышло! Твой результат: '+score+' очков.';draw();return;}}requestAnimationFrame(tick);}
+start.addEventListener('click',()=>{score=0;client=1;time=60;scoreEl.textContent='0';clientEl.textContent='1';timeEl.textContent='60';resetHair();playing=true;start.disabled=true;start.textContent='Игра идёт';message.textContent='Стриги волосы пальцем! Каждый волос — 10 очков.';last=performance.now();draw();requestAnimationFrame(tick);});
+resetHair();draw();
+})();
+</script></body></html>
